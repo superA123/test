@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.jeesite.business.modules.cms.dao.CmsNewsDao">
+    
+	<sql id="cmsNewsColumns">
+		a.id AS "id",
+		a.addtime AS "addtime",
+		a.title AS "title",
+		a.content AS "content",
+		a.publisher AS "publisher"
+	</sql>
+	
+	<sql id="cmsNewsJoins">
+	</sql>
+    
+	<select id="get" resultType="CmsNews">
+		SELECT 
+			<include refid="cmsNewsColumns"/>
+		FROM cms_news a
+		<include refid="cmsNewsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="CmsNews">
+		SELECT 
+			<include refid="cmsNewsColumns"/>
+		FROM cms_news a
+		<include refid="cmsNewsJoins"/>
+		<where>
+			
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="CmsNews">
+		SELECT 
+			<include refid="cmsNewsColumns"/>
+		FROM cms_news a
+		<include refid="cmsNewsJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO cms_news(
+			id,
+			addtime,
+			title,
+			content,
+			publisher
+		) VALUES (
+			#{id},
+			#{addtime},
+			#{title},
+			#{content},
+			#{publisher}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE cms_news SET 	
+			addtime = #{addtime},
+			title = #{title},
+			content = #{content},
+			publisher = #{publisher}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM cms_news
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

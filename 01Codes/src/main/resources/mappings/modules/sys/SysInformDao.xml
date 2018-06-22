@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.jeesite.core.modules.sys.dao.SysInformDao">
+    
+	<sql id="sysInformColumns">
+		a.id AS "id",
+		a.addtime AS "addtime",
+		a.title AS "title",
+		a.content AS "content",
+		a.publisher AS "publisher"
+	</sql>
+	
+	<sql id="sysInformJoins">
+	
+	</sql>
+    
+	<select id="get" resultType="SysInform">
+		SELECT 
+			<include refid="sysInformColumns"/>
+		FROM sys_inform a
+		<include refid="sysInformJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysInform">
+		SELECT 
+			<include refid="sysInformColumns"/>
+		FROM sys_inform a
+		<include refid="sysInformJoins"/>
+		<where>
+			
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysInform">
+		SELECT 
+			<include refid="sysInformColumns"/>
+		FROM sys_inform a
+		<include refid="sysInformJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_inform(
+			id,
+			addtime,
+			title,
+			content,
+			publisher
+		) VALUES (
+			#{id},
+			#{addtime},
+			#{title},
+			#{content},
+			#{publisher}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_inform SET 	
+			addtime = #{addtime},
+			title = #{title},
+			content = #{content},
+			publisher = #{publisher}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_inform
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

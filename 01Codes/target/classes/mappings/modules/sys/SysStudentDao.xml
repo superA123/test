@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.jeesite.core.modules.sys.dao.SysStudentDao">
+
+	 <resultMap id="roleResult" type="Role">
+		<id property="id" column="id" />
+		<result property="className" column="className" />
+	</resultMap>
+    
+	<sql id="sysStudentColumns">
+		a.id AS "id",
+		a.classid AS "classid",
+		b.classname AS "className",
+		a.code AS "code",
+		a.name AS "name",
+		a.age AS "age",
+		a.gender AS "gender",
+		a.hobby AS "hobby",
+		a.parent_name AS "parentName",
+		a.phone AS "phone",
+		a.address AS "address",
+		a.addtime AS "addtime",
+		a.remarks AS "remarks",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="sysStudentJoins">
+	LEFT JOIN sys_classes b
+    ON  a.classid=b.code
+	</sql>
+    
+	<select id="get" resultType="SysStudent">
+		SELECT 
+			<include refid="sysStudentColumns"/>
+		FROM sys_student a
+		<include refid="sysStudentJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<!--  <select id="findList" resultType="SysStudent">
+		SELECT 
+			<include refid="sysStudentColumns"/>
+		FROM sys_student a
+		<include refid="sysStudentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND b.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="classid != null and classid != ''"> 
+					AND a.classid = #{classid}
+			</if> 
+			<if test="code != null and code != ''"> 
+					AND a.code = #{code}
+			</if> 
+		</where>
+		ORDER BY a.classid
+	</select>-->
+	
+	<select id="findList" resultType="SysStudent">
+		select a.classname AS "className",b.* FROM  sys_classes a
+			left JOIN sys_student b
+			on b.classid=a.code
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+			<if test="masterId != null and masterId != ''"> 
+					AND a.master_id = #{masterId}
+			</if> 
+			<if test="code != null and code != ''"> 
+					AND b.code = #{code}
+			</if> 
+			<if test="classid != null and classid != ''"> 
+					 and b.classid = #{classid}
+			</if>
+		</where>
+		ORDER BY b.classid
+	</select>
+	<select id="findAllList" resultType="SysStudent">
+		SELECT 
+			<include refid="sysStudentColumns"/>
+		FROM sys_student a
+		<include refid="sysStudentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="code != null and code != ''"> 
+					AND a.code = #{code}
+			</if> 
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_student(
+			id,
+			classid,
+			code,
+			name,
+			age,
+			gender,
+			hobby,
+			parent_name,
+			phone,
+			address,
+			addtime,
+			remarks,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			del_flag
+		) VALUES (
+			#{id},
+			#{classid},
+			#{code},
+			#{name},
+			#{age},
+			#{gender},
+			#{hobby},
+			#{parentName},
+			#{phone},
+			#{address},
+			#{addtime},
+			#{remarks},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_student SET 	
+			classid = #{classid},
+			code = #{code},
+			name = #{name},
+			age = #{age},
+			gender = #{gender},
+			hobby = #{hobby},
+			parent_name = #{parentName},
+			phone = #{phone},
+			address = #{address},
+			addtime = #{addtime},
+			remarks = #{remarks},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_student SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

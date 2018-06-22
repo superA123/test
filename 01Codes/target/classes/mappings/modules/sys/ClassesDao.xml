@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.jeesite.core.modules.sys.dao.ClassesDao">
+    
+     <resultMap id="roleResult" type="Role">
+		<id property="id" column="id" />
+		<result property="code" column="code" />
+		<result property="classname" column="classname" />
+		<result property="type" column="type" />
+		<result property="masterId" column="master_Id" />
+		<result property="userName" column="userName" />
+		<result property="createTime" column="create_time" />
+		<result property="updateBy.id" column="update_by" />
+		<result property="createBy.id" column="create_by" />
+		<result property="updateTime" column="update_time" />
+		<result property="remarks" column="remarks" />
+	</resultMap>
+	
+	<sql id="classesColumns">
+		a.id AS "id",
+		a.code AS "code",
+		a.classname AS "classname",
+		a.type AS "type",
+		a.master_Id,
+		b.name AS "userName",
+		a.remarks AS "remarks",
+		a.create_by AS "createBy.id",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy.id",
+		a.update_time AS "updateTime",
+		a.del_flag AS "delFlag"
+		
+	</sql>
+	
+	<sql id="classesJoins">
+	LEFT JOIN sys_user b
+    ON  a.master_Id=b.no
+	</sql>
+    
+	<select id="get" resultType="Classes">
+		SELECT 
+			<include refid="classesColumns"/>
+		FROM sys_classes a
+		<include refid="classesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	
+	<select id="findList" resultType="Classes">
+		SELECT 
+			<include refid="classesColumns"/>
+		FROM sys_classes a
+		<include refid="classesJoins"/>
+		<where>
+		
+			a.del_flag = #{DEL_FLAG_NORMAL}
+				<if test="type != null and type != ''">
+					AND a.type = #{type}
+				</if>
+				<if test="masterId != null and masterId != ''">
+					AND a.master_Id = #{masterId}
+				</if>
+		</where>
+		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Classes">
+		SELECT 
+			<include refid="classesColumns"/>
+		FROM sys_classes a
+		<include refid="classesJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_classes(
+			id,
+			code,
+			classname,
+			type,
+			master_Id,
+			remarks,
+			create_by,
+			create_time,
+			update_by,
+			update_time,
+			del_flag
+		) VALUES (
+			#{id},
+			#{code},
+			#{classname},
+			#{type},
+			#{masterId},
+			#{remarks},
+			#{createBy.id},
+			#{createTime},
+			#{updateBy.id},
+			#{updateTime},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_classes SET 	
+			code = #{code},
+			classname = #{classname},
+			type = #{type},
+			master_Id = #{masterId},
+			remarks = #{remarks},
+			create_time = #{createTime},
+			update_by = #{updateBy.id},
+			update_time = #{updateTime}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_classes SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

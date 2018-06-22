@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ordering - 登录</title>
+
+    <link rel="shortcut icon" href="${ctxPath}/static/favicon.ico">
+    <link href="${ctxPath}/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="${ctxPath}/static/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="${ctxPath}/static/css/animate.css" rel="stylesheet">
+    <link href="${ctxPath}/static/css/style.css?v=4.1.0" rel="stylesheet">
+    <script>if (window.top !== window.self) {
+        window.top.location = window.location;
+    }</script>
+    <script src="${ctxPath}/static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="${ctxPath}/static/js/bootstrap.min.js?v=3.3.6"></script>
+</head>
+
+<body class="gray-bg">
+
+        <div>
+           <h3>首页</h3>
+        </div><hr><br>
+        <div>
+           <h3>暂存订单</h3>
+        </div><hr><br>
+        <div>
+           <h3>已提交订单</h3>
+        </div><hr><br>
+        <div>
+           <h3>修改密码</h3>
+        </div><hr >
+        <div>
+           <a href="logout"><h3>退出登陆</h3></a>
+        </div><hr >
+        
+
+<script>
+    $(function(){
+        $("#kaptcha").on('click',function(){
+            $("#kaptcha").attr('src', '${ctxPath}/kaptcha?' + Math.floor(Math.random()*100) ).fadeIn();
+        });
+    });
+</script>
+
+</body>
+
+</html>
